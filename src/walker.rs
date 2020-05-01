@@ -4,7 +4,7 @@ use std::error::Error;
 
 use rand::Rng;
 use sdl2::pixels::Color;
-use sdl2::rect::Point;
+use sdl2::rect::Rect;
 
 #[derive(Copy, Clone)]
 pub struct Walker {
@@ -21,8 +21,10 @@ impl Walker {
     }
 
     pub fn display(&self, app: &mut App) -> Result<(), Box<dyn Error>> {
+        let r = Rect::new(self.x, self.y, 2, 2);
         app.canvas.set_draw_color(Color::RGB(0, 0, 0));
-        app.canvas.draw_point(Point::new(self.x, self.y))?;
+        app.canvas.fill_rect(r)?;
+        app.canvas.draw_rect(r)?;
         Ok(())
     }
 
