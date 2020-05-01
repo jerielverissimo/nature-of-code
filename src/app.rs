@@ -7,9 +7,15 @@ use sdl2::pixels::Color;
 use sdl2::render;
 use sdl2::video;
 
+use super::walker::Walker;
+
+pub const WINDOW_WIDTH: u32 = 640;
+pub const WINDOW_HEIGHT: u32 = 360;
+
 pub struct App {
+    pub canvas: render::Canvas<video::Window>,
     events: sdl2::EventPump,
-    canvas: render::Canvas<video::Window>,
+    w: Walker,
 }
 
 impl App {
@@ -18,7 +24,7 @@ impl App {
         let video_subsystem = sdl_context.video()?;
 
         let window = video_subsystem
-            .window("Nature of Code", 800, 600)
+            .window("Nature of Code", WINDOW_WIDTH, WINDOW_HEIGHT)
             .position_centered()
             .opengl()
             .build()?;
@@ -30,7 +36,11 @@ impl App {
         canvas.clear();
         canvas.present();
 
-        Ok(Self { canvas, events })
+        Ok(Self {
+            canvas,
+            events,
+            w: Walker::new(),
+        })
     }
 
     pub fn run(&mut self) {
@@ -46,9 +56,16 @@ impl App {
                 }
             }
 
-            self.canvas.clear();
+            self.draw();
+
             self.canvas.present();
             std::thread::sleep(Duration::new(0, 1_000_000_000u32 / 30));
         }
+    }
+
+    pub fn draw(&mut self) -> Result<(), Box<dyn Error>> {
+        self.w.step();
+        self.w.clone().display(self)?;
+        Ok(())
     }
 }

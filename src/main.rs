@@ -1,6 +1,7 @@
 use std::error::Error;
 
 mod app;
+mod walker;
 
 use app::App;
 
